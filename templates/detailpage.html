@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+
+    <!-- Webpage Title -->
+    <title>상세페이지</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <!-- Font Awesome CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+
+        html {
+            font-size: 15px;
+        }
+
+        .btn {
+            margin-top: 5px;
+            justify-content: space-between;
+            flex-direction: row;
+        }
+
+        .board_wrap {
+            width: 800px;
+            margin: 90px auto auto auto;
+            max-width: 100%;
+        }
+
+        .board_title strong {
+
+            font-size: 3rem;
+        }
+
+        .board_title p {
+            margin-top: 4px;
+            font-size: 1.4rem;
+        }
+
+        .board_write .title {
+            margin-top: 15px;
+        }
+
+        .writing_box {
+            margin-top: 15px;
+            border: solid 1px;
+            border-color: lightgrey;
+            width: 100%;
+            height: 310px;
+            padding: 15px;
+        }
+
+        .image_box {
+            margin-top: 15px;
+            border: solid 1px;
+            border-color: lightgrey;
+            width: 100%;
+            height: 310px;
+            padding: 15px;
+        }
+
+
+        .board_write .cont textarea {
+            display: block;
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            box-sizing: border-box;
+            border: 0;
+            resize: vertical;
+        }
+
+        .date {
+            padding-bottom: 10px;
+        }
+
+        .level-left {
+            margin-left: 30px;
+            margin-top: 10px;
+        }
+
+        .level-right {
+            margin-right: 15px;
+            margin-top: 10px;
+        }
+
+        .feedback .button {
+            margin-top: 10px;
+            margin-left: 918px;
+        }
+
+        .card1 {
+            width: 1000px;
+            height: 90px;
+            margin-top: 30px;
+        }
+
+        .mypost {
+            margin: 40px auto auto auto;
+        }
+
+        .mypost > button {
+            float: right;
+            margin-bottom: 20px;
+        }
+
+        .bottonline {
+            margin-top: 20px;
+        }
+
+        .feedback-box {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+          .card {
+            width: 1000px;
+            height: 90px;
+            margin-top: 30px;
+
+        }
+
+    </style>
+    <script>
+        $(document).ready(function () {
+            find_post();
+            look_feedback();
+        });
+
+        {#db에서 포스팅 정보 가져오기 및 출력준비#}
+
+        function find_post() {
+            $.ajax({
+                type: 'GET',
+                url: '/posting/save',
+                data: {},
+                success: function (response) {
+                    let rows = response['posts']
+                    for (let i = 0; i < rows.length; i++) {
+                        let title = rows[i]['title']
+                        let name = rows[i]['username1']
+                        let num = rows[i]['num']
+                        let datepicker = rows[i]['datepicker']
+                        let comment = rows[i]['comment']
+                        let time = rows[i]['time']
+                        let kind = rows[i]['kind']
+
+                        let temp_html = ``
+
+                        if (num == window.location.href.split("/")[4]) {
+                            temp_html = `<div class="card1 h-100">
+                                            <img src= "../static/${num}.png" alt="사진"/>
+                                            <div class="card-body">
+                                                <h3><strong>제목: ${title}<strong></h3><br/>
+                                                <p class="card-text">이름: ${name}</p>
+                                                <p class="card-text">운동종류: ${kind}</p>
+                                                <p class="card-text">운동시간: ${time}</p>
+                                                <p class="card-text">운동날짜: ${datepicker}</p>
+                                                <p class="card-text">내용: ${comment}</p>
+                                            </div>
+                                        </div>`
+                        }
+                        $('#post-card').append(temp_html)
+                    }
+                }
+            })
+        }
+
+
+        {#db에서 댓글 가져오기#}
+
+        function look_feedback() {
+            $.ajax({
+                type: 'GET',
+                url: '/posting/feedback_save',
+                data: {},
+                success: function (response) {
+                    let rows = response['feedbacks']
+
+                    for (let i = 0; i < rows.length; i++) {
+                        let name = rows[i]['name']
+                        let feedback = rows[i]['feedback']
+                        let num = rows[i]['num']
+
+                        let temp_html = ''
+
+                        if (num == window.location.href.split("/")[4]) {
+                            temp_html = `
+                                           <text>${name}: ${feedback}</text></br>`
+                        }
+                        $('#input_feedbacks').append(temp_html)
+                    }
+                }
+            });
+        }
+
+        {#db에 댓글 저장#}
+
+        function get_feedback() {
+            let feedback = $('#input_feedback').val()
+            let url = window.location.href.split("/")[4]
+
+            $.ajax({
+                type: "POST",
+                url: "/posting/feedback_save",
+                data: {feedback_give: feedback, num_give: url},
+                success: function (response) {
+                    alert(response["msg"])
+                    window.location.reload()
+                }
+            });
+        }
+
+        {#로그아웃#}
+
+        function sign_out() {
+            $.removeCookie('mytoken', {path: '/'});
+            alert('로그아웃!')
+            window.location.href = "/login"
+        }
+    </script>
+
+</head>
+
+<body>
+<!-- Main container -->
+    <div class="headcolor">
+        <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation">
+            <!-- Left side -->
+            <div class="level-left">
+                <p class="level-item"><a href="/">HOME</a></p>
+            </div>
+            <!-- Right side -->
+
+            <p class="level-item">
+            <p class="level-item">반갑습니다 {{ user_info.username1 }}님</p>
+            </p>
+            <div class="level-right">
+                <p class="level-item">
+                    <button class="button is-link" onclick="sign_out()">로그아웃</button>
+                </p>
+            </div>
+        </nav>
+    </div>
+</div>
+
+<div class="board_wrap">
+
+    {#posting 정보 불러오기#}
+    <div class="post-box">
+        <div class="row row-cols-1 row-cols-md-4 g-4" id="post-card"/>
+    </div>
+
+    {#댓글 입력#}
+    <div class="mypost">
+        <div class="form-floating">
+            <textarea class="form-control" placeholder="Leave a comment here" id="input_feedback"></textarea>
+            <label for="feedback">댓글을 남겨주세요.</label>
+        </div>
+        <button onclick="get_feedback()" type="button" class="btn btn-outline-secondary">댓글 남기기</button>
+    </div>
+
+    {#  댓글 붙이는 카드#}
+    <div class="card">
+    <div id="input_feedbacks">
+    </div>
+        </div>
+</div>
+</body>
+</html>

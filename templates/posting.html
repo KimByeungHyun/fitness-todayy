@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <script src="{{ url_for('static',filename='js/jquery.min.js') }}"></script>
+
+    <!-- Webpage Title -->
+    <title>오늘의 운동</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <!-- Font Awesome CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script src="{{ url_for('static',filename='js/jquery.min.js') }}"></script>
+
+    <STYLE>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            font-size: 15px;
+        }
+
+        .btn {
+            margin-top: 5px;
+            justify-content: space-between;
+            flex-direction: row;
+        }
+
+        .board_wrap {
+            width: 1000px;
+            margin: 100px auto;
+        }
+
+        .board_title {
+            margin-bottom: 30px;
+            border-bottom: solid 3px;
+        }
+
+        .board_title strong {
+
+            font-size: 3rem;
+        }
+
+        .board_title p {
+            margin-top: 4px;
+            font-size: 1.4rem;
+        }
+
+        .board_write .title {
+            margin-top: 15px;
+        }
+
+        .writing_box {
+            margin-top: 15px;
+            border: solid 1px;
+            border-color: lightgrey;
+            width: 100%;
+            height: 310px;
+            padding: 15px;
+        }
+
+
+        .board_write .cont textarea {
+            display: block;
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            box-sizing: border-box;
+            border: 0;
+            resize: vertical;
+        }
+
+        .date {
+            padding-bottom: 10px;
+        }
+
+        .topimg {
+            background-image: url("https://www.reshot.com/preview-assets/illustrations/LSJ7RYHVG6/winter-running-LSJ7RYHVG6-w1600.jpg");
+            background-size: cover;
+            width: 1200px;
+            height: 500px;
+            margin: auto;
+        }
+
+                     .level-left {
+            margin-left: 30px;
+            margin-top: 10px;
+        }
+
+        .level-right {
+            margin-right: 15px;
+            margin-top: 10px;
+        }
+    </STYLE>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script>
+        // ----- 달력
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"
+                    charset="UTF-8"></script>
+    <link
+            rel="stylesheet"
+            href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
+    />
+
+    <script>
+        $(function () {
+            $("#input-datepicker").datepicker({dateFormat: "yy-mm-dd"});
+        });
+    </script>
+    {#    날짜 선택 달력#}
+    <script>
+        $.datepicker.setDefaults({
+            dateFormat: 'yy-mm-dd',
+            prevText: '이전 달',
+            nextText: '다음 달',
+            monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+            monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+            dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+            dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+            dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+            showMonthAfterYear: true,
+            yearSuffix: '년'
+        });
+        $(function () {
+            $("#input-datepicker").datepicker();
+        });
+    </script>
+    {#포스팅 정보 db에 저장#}
+    <script>
+        function posting() {
+            let username = $('#input-username').val()
+            let username1 = $('#input-username1').val()
+            let title = $('#input-title').val()
+            let datepicker = $('#input-datepicker').val()
+            let kind = $('#input-kind').val()
+            let time = $('#input-time').val()
+            let comment = $('#input-comment').val()
+
+
+            let file = $('#file')[0].files[0]
+            let form_data = new FormData()
+
+            form_data.append("file_give", file)
+            form_data.append("username_give", username)
+            form_data.append("username1_give", username1)
+            form_data.append("title_give", title)
+            form_data.append("datepicker_give", datepicker)
+            form_data.append("kind_give", kind)
+            form_data.append("time_give", time)
+            form_data.append("comment_give", comment)
+
+            $.ajax({
+                type: "POST",
+                url: "/posting/save",
+                data: form_data,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    alert("작성완료!")
+                    window.location.href = "/"
+                }
+            });
+        }
+    </script>
+    {#사진 미리보기#}
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('preview').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                document.getElementById('preview').src = "";
+            }
+        }
+    </script>
+    {#로그아웃#}
+    <script>
+        function sign_out() {
+            $.removeCookie('mytoken', {path: '/'});
+            alert('로그아웃!')
+            window.location.href = "/"
+        }
+    </script>
+
+</head>
+
+<body>
+{#네비게이션 바#}
+    <div class="headcolor">
+        <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation">
+            <!-- Left side -->
+            <div class="level-left">
+                <p class="level-item"><a href="/">HOME</a></p>
+            </div>
+            <!-- Right side -->
+
+            <p class="level-item">
+            <p class="level-item">반갑습니다 {{ user_info.username1 }}님</p>
+            </p>
+            <div class="level-right">
+                <p class="level-item">
+                    <button class="button is-link" onclick="sign_out()">로그아웃</button>
+                </p>
+            </div>
+        </nav>
+    </div>
+</div>
+
+{#포스트 정보 입력#}
+<div class="topimg"></div>
+{#토글에서 유저정보 가져오기#}
+<input type="text" class="is-hidden" value="{{ user_info.username1 }}" id="input-username1">
+<input type="text" class="is-hidden" value="{{ user_info.username }}" id="input-username">
+
+<div class="board_wrap">
+    <div class="board_title">
+        <strong>기록하기</strong>
+        <p>나의 오늘 운동현황을 기록합니다.</p>
+    </div>
+    <div class="upload">
+        <input type="file" onchange="readURL(this);" id="file">
+        <img id="preview"/>
+    </div>
+    <div class="board_write_wrap">
+        <div class="board_write">
+            <div class="title">
+                <label for="title" class="form-label">제목</label>
+                <input type="text" class="form-control" id="input-title" placeholder="제목을 입력하세요.">
+            </div>
+            <div class="writing_box">
+                <div class="date">날짜 선택하기 : <input id="input-datepicker"></div>
+                <div>
+                    <div class="kind">
+                        <div class="input-group mb-3">
+                            <label class="input-group-text" for="kind">운동종류</label>
+                            <select class="form-select" id="input-kind">
+                                <option selected>--선택하기--</option>
+                                <option value="걷기">걷기</option>
+                                <option value="계단오르기">계단오르기</option>
+                                <option value="근력운동">근력운동</option>
+                                <option value="달리기">달리기</option>
+                                <option value="수영">수영</option>
+                                <option value="요가">요가</option>
+                                <option value="테니스">테니스</option>
+                                <option value="필라테스">필라테스</option>
+                                <option value="하이킹">하이킹</option>
+                                <option value="기타">기타</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="time">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="t">운동시간</span>
+                            <input type="text" class="form-control" aria-label="Sizing example input"
+                                   aria-describedby="inputGroup-sizing-default" id="input-time">
+                        </div>
+                    </div>
+                    <div class="comment">
+                    <textarea class="form-control" placeholder="Leave a comment here" id="input-comment"
+                              style="height: 140px"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="btn">
+        <button onclick="posting()" type="button" class="btn btn-dark">등록</button>
+        <button onclick="window.location.href='/'" class="btn btn-dark">취소</button>
+    </div>
+</div>
+
+</body>
+
+</html>

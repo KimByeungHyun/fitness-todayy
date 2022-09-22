@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+
+    <!-- Webpage Title -->
+    <title>오늘의 운동</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <!-- Font Awesome CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='mystyle.css') }}" rel="stylesheet">
+
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <style>
+
+
+        .head {
+            margin: 30px 100px 0 100px;
+        }
+
+        .together {
+            display: flex;
+            flex: 1;
+            justify-content: space-between;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .level-left {
+            margin-left: 30px;
+            margin-top: 10px;
+        }
+
+        .level-right {
+            margin-right: 15px;
+            margin-top: 10px;
+        }
+
+        body {
+            background-color: lightsteelblue;
+            min-height: 100vh;
+            padding-top: 3.25rem;
+        }
+    </style>
+
+    {#    사진 미리보기#}
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('preview').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                document.getElementById('preview').src = "";
+            }
+        }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            listing();
+        });
+        {#db에서 포스팅 정보 가져오기 및 출력 준비#}
+
+        function listing() {
+            let search = $('#input_search').val()
+            $.ajax({
+                type: 'GET',
+                url: '/posting/save',
+                data: {},
+                success: function (response) {
+                    let rows = response['posts']
+                    $('#post-card').empty()
+                    for (let i = 0; i < rows.length; i++) {
+                        let title = rows[i]['title']
+                        let name = rows[i]['username1']
+                        let num = rows[i]['num']
+
+                        let temp_html = ``
+
+                        if (search == 0) {
+                            temp_html = `<a id="main-card" href="/post/${num}" class="col">
+                                            <div class="card h-100">
+                                               <img class="image_size" src= "static/${num}.png" alt="사진"/>
+                                                <div class="card-body">
+                                                    <h5 class="card-title">${title}</h5>
+                                                    <p class="card-text">${name}</p>
+                                                </div>
+                                            </div>
+                                        </a>`
+                        } else if (search == name) {
+                            temp_html = `<a id="main-card" href="/post/${num}" class="col">
+                                            <div class="card h-100">
+                                                <img class="image_size" src= "static/${num}.png" alt="사진"/>
+                                                <div class="card-body">
+                                                    <h5 class="card-title">${title}</h5>
+                                                    <p class="card-text">${name}</p>
+                                                </div>
+                                            </div>
+                                        </a>`
+                        }
+                        $('#post-card').append(temp_html)
+                    }
+                    search = 0
+                }
+            })
+        }
+    </script>
+
+    <script>
+        {#        로그아웃#}
+
+        function sign_out() {
+            $.removeCookie('mytoken', {path: '/'});
+            alert('로그아웃!')
+            window.location.href = "/login"
+        }
+    </script>
+</head>
+
+<body>
+<div style="overflow-x:hidden;">
+    {#    네비게이션 바#}
+    <div class="headcolor">
+        <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation">
+            <!-- Left side -->
+            <div class="level-left">
+                <p class="level-item"><a href="/">HOME</a></p>
+            </div>
+            <!-- Right side -->
+
+            <p class="level-item">
+            <p class="level-item">반갑습니다 {{ user_info.username1 }}님</p>
+            </p>
+            <div class="level-right">
+                <p class="level-item">
+                    <button class="button is-link" onclick="sign_out()">로그아웃</button>
+                </p>
+            </div>
+        </nav>
+    </div>
+</div>
+
+
+    <header class="head">
+        <div class="together">
+            <div class="field has-addons">
+                <p class="control">
+                    <input class="input" id="input_search" type="text" placeholder="Find a person">
+                </p>
+                <p class="control">
+                    <button class="button" onclick="listing()">
+                        Search
+                    </button>
+                    <button type="button" class="btn btn-light" onclick="window.location.reload()">검색 초기화</button>
+                </p>
+            </div>
+            <div class="under">
+                <button class="button is-link is-light"
+                        onclick="window.location.href='/posting/{{ user_info.username }}'">
+                    글쓰기
+                </button>
+            </div>
+        </div>
+    </header>
+
+
+    {#    검색/초기화/글 작성#}
+
+    {#    포스팅정보 불러오기#}
+    <div class="post-box">
+        <div class="row row-cols-1 row-cols-md-4 g-4" id="post-card"/>
+    </div>
+    <div id="user-box"></div>
+</div>
+</body>
+
+</html>
